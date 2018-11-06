@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="assets/css/simditor.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+
+    <title>Acamica Task list</title>
+</head>
+
+<body>
+    <div class="container-fluid p-0">
+        <nav class="navbar navbar-light bg-light d-flex justify-content-between header-task">
+            <a class="navbar-brand" href="#" title="Create, edit and delete your tasks easily.">
+                <img src="./assets/img/icon_todo.png" width="30" height="30" class="d-inline-block align-top" alt="">
+                Simple task list
+            </a>
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <button class="btn btn-primary btn-sm" onclick="newOrEdit(false)">New task</button>
+                </li>
+            </ul>
+        </nav>
+        <div class="border-multicolor"></div>
+
+        <div class="row m-0 p-0 d-flex align-items-stretch content-task">
+            <div class="col-12 col-sm-12 col-md-6 col-lg-3 p-0 mb-4">
+                <div class="card text-black bg-warning text-center rounded-0">
+                    <div class="card-header p-0 border-bottom-0">
+                        - TO DO -
+                    </div>
+                    <div class="card-body p-0">
+                        <h2 id="count-todo"></h2>
+                    </div>
+                </div>
+                <div id="task-list-todo" class="list-group p-1 pt-2"></div>
+            </div>
+            <div class="col-12 col-sm-12 col-md-6 col-lg-3 p-0 mb-4">
+                <div class="card text-white bg-info text-center rounded-0">
+                    <div class="card-header p-0 border-bottom-0">
+                        - IN PROGRESS -
+                    </div>
+                    <div class="card-body p-0">
+                        <h2 id="count-inprogress"></h2>
+                    </div>
+                </div>
+                <div id="task-list-inprogress" class="list-group p-1 pt-2"></div>
+            </div>
+            <div class="col-12 col-sm-12 col-md-6 col-lg-3 p-0 mb-4">
+                <div class="card text-white bg-success text-center rounded-0">
+                    <div class="card-header p-0 border-bottom-0">
+                        - DONE -
+                    </div>
+                    <div class="card-body p-0">
+                        <h2 id="count-done"></h2>
+                    </div>
+                </div>
+                <div id="task-list-done" class="list-group p-1 pt-2"></div>
+            </div>
+            <div class="col-12 col-sm-12 col-md-6 col-lg-3 p-0 mb-4">
+                <div class="card text-white bg-danger text-center rounded-0">
+                    <div class="card-header p-0 border-bottom-0">
+                        - DELETED -
+                    </div>
+                    <div class="card-body p-0">
+                        <h2 id="count-deleted"></h2>
+                    </div>
+                </div>
+                <div id="task-list-deleted" class="list-group p-1 pt-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="total-task-created" class="text-light bg-dark m-0 p-2 d-flex justify-content-end"></div>
+
+    <!-- Modal NEW/EDIT Task -->
+    <div class="modal fade" id="newTask" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="title-new-edit-task"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="taskname">Name / Title</label>
+                            <input type="text" class="form-control" id="taskname" placeholder="Name your task here!"
+                                autofocus>
+                            <small id="msjFail"></small>
+                        </div>
+                        <div class="form-group">
+                            <label for="taskdescription">Description</label>
+                            <textarea class="form-control" id="taskdescription" rows="5" placeholder="What are you need doing?"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <div id="idTaskEdit"></div>
+                    <div>
+                        <button type="button" id="sendTask" class="btn btn-success">Create</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal See complete Task -->
+    <div class="modal fade" id="seeTask" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title title-of-task"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body content-of-task">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn btn-violet" title="Edit this task" id="modal-edit-task">
+                        <i class="material-icons">edit</i>
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+    <script src="assets/js/simditor/module.js"></script>
+    <script src="assets/js/simditor/hotkeys.js"></script>
+    <script src="assets/js/simditor/simditor.js"></script>
+    <script src="assets/js/simditor/uploader.js"></script>
+
+    <script src="assets/js/tasks.js"></script>
+    <script src="assets/js/actions.js"></script>
+</body>
+
+</html>
