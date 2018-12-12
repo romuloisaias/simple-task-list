@@ -32,13 +32,13 @@ app.all('*', cors())
 
 app.route('/api')
     .get(cors(), function (req, res) {
-        res.send('api solo')
+        res.send('api solo');
     })
     //----------------------------------- POST
     .post(cors(), function (req, res) {
         var title = req.body.title,
             id = shortid.generate(),
-            status = req.body.status,
+            status = req.body.status.toUpperCase(),
             description = req.body.description,
             date = new Date().toLocaleString('es-AR', { hour12: false })
 
@@ -65,6 +65,7 @@ app.route('/api')
         var id = req.body.id,
             title = req.body.title,
             status = req.body.status,
+            status = status.toUpperCase();
             description = req.body.description,
             date = new Date().toLocaleString('es-AR', { hour12: false }),
             value = db_task.find({ id }).value()
@@ -99,7 +100,10 @@ app.route('/api')
             res.status(400).json('Oops! ID: "' + id + '" not exist.')
         }
     })
-
+/*app.route('/api/:status')
+    .get(cors(), function(req,res){
+    res.send('hola romulo. tu variable es: '+ req.params.qwe)
+})*/
 app.route('/api/:status')
     //----------------------------------- GET
     .get(cors(), function (req, res) {
@@ -108,26 +112,65 @@ app.route('/api/:status')
         res.header('Pragma', 'no-cache');
 
         //res.json(db.getState())
-        switch (req.params.status) {
-            case "todo":
+        var stat=req.params.status.toUpperCase();
+        switch (stat) {
+            case "TODO":
                 res.json(db_task.filter({ status: 'TODO' }).value())
                 break;
-            case "done":
+            case "DONE":
                 res.json(db_task.filter({ status: 'DONE' }).value())
                 break;
-            case "inprogress":
+            case "INPROGRESS":
                 res.json(db_task.filter({ status: 'IN PROGRESS' }).value())
                 break;
-            case "deleted":
+            case "DELETED":
                 res.json(db_task.filter({ status: 'DELETED' }).value())
                 //.take(5)
                 break;
-            case "total":
+            case "TOTAL":
                 res.json({ count_live: db_task.size().value(), count_total: db_count.value() })
                 break;
             default:
                 res.json(db_task.find({ id: req.params.status }).value())
                 break;
+        }
+    })
+    .put(cors(), function(req, res){
+        res.json(db_task.find({ id: req.params.status }).value())
+        var id = req.body.id,
+        title = req.body.title,
+        status = req.body.status.toUpperCase(),
+        description = req.body.description,
+        date = new Date().toLocaleString('es-AR', { hour12: false }),
+        value = db_task.find({ id }).value()
+
+        if (value) {
+            db_task
+                .find({ id })
+                .assign({
+                    status,
+                    title,
+                    description
+                    /*date*/
+                })
+                .write()
+            res.status(200).json(value)
+        } else {
+            res.status(400).json('Oops! ID: "' + id + '" not exist.')
+        }
+    })
+    //----------------------------------- DELETE
+    .delete(cors(), function (req, res) {
+        var id = req.body.id,
+            value = db_task.find({ id }).value()
+
+        if (value) {
+            db_task
+                .remove({ id })
+                .write()
+            res.status(200).json(value)
+        } else {
+            res.status(400).json('Oops! ID: "' + id + '" not exist.')
         }
     })
 
